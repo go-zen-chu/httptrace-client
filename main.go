@@ -5,11 +5,10 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptrace"
-	"time"
 )
 
-func getNowTimeStamp() string {
-	return time.Now().Format("2006-01-02T15:04:05.999999Z")
+func init() {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds)
 }
 
 func main() {
@@ -17,34 +16,34 @@ func main() {
 
 	trace := &httptrace.ClientTrace{
 		GetConn: func(hostPort string) {
-			log.Printf("[%s] GetConn: %s\n", getNowTimeStamp(), hostPort)
+			log.Printf("GetConn: %s\n", hostPort)
 		},
 		GotConn: func(connInfo httptrace.GotConnInfo) {
-			log.Printf("[%s] GotConn: %+v\n", getNowTimeStamp(), connInfo)
+			log.Printf("GotConn: %+v\n", connInfo)
 		},
 		DNSStart: func(dnsInfo httptrace.DNSStartInfo) {
-			log.Printf("[%s] DNSStart: %+v\n", getNowTimeStamp(), dnsInfo)
+			log.Printf("DNSStart: %+v\n", dnsInfo)
 		},
 		DNSDone: func(dnsInfo httptrace.DNSDoneInfo) {
-			log.Printf("[%s] DNSDone: %+v\n", getNowTimeStamp(), dnsInfo)
+			log.Printf("DNSDone: %+v\n", dnsInfo)
 		},
 		GotFirstResponseByte: func() {
-			log.Printf("[%s] GotFirstResponseByte\n", getNowTimeStamp())
+			log.Println("GotFirstResponseByte")
 		},
 		TLSHandshakeStart: func() {
-			log.Printf("[%s] TLSHandshakeStart\n", getNowTimeStamp())
+			log.Println("TLSHandshakeStart")
 		},
 		TLSHandshakeDone: func(state tls.ConnectionState, err error) {
 			if err != nil {
-				log.Printf("[%s] error TLSHandshakeDone: %s\n", getNowTimeStamp(), err.Error())
+				log.Printf("error TLSHandshakeDone: %s\n", err.Error())
 			}
-			log.Printf("[%s] TLSHandshakeDone: %+v\n", getNowTimeStamp(), state)
+			log.Printf("TLSHandshakeDone: %+v\n", state)
 		},
 		WroteHeaderField: func(key string, value []string) {
-			log.Printf("[%s] WroteHeaderField: %s %+v\n", getNowTimeStamp(), key, value)
+			log.Printf("WroteHeaderField: %s %+v\n", key, value)
 		},
 		WroteRequest: func(reqInfo httptrace.WroteRequestInfo) {
-			log.Printf("[%s] WroteRequest: %+v\n", getNowTimeStamp(), reqInfo)
+			log.Printf("WroteRequest: %+v\n", reqInfo)
 		},
 	}
 	req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
